@@ -68,8 +68,8 @@ using namespace apache::thrift::server;
 // #define IMAGE_DATABASE "/home/hailong/sirius/sirius-application/image-matching/matching/landmarks/db"
 // #define MATCHING_METHOD 1
 // #define IMAGE_DATABASE "/home/hailong/sirius/sirius-application/image-matching/matching/landmarks/db"
-#define SERVICE_TYPE "asr"
-#define SERVICE_INPUT_TYPE "audio"
+//#define SERVICE_TYPE "asr"
+//#define SERVICE_INPUT_TYPE "audio"
 
 class SpeechRecognitionServiceHandler : public IPAServiceIf {
 	public:
@@ -77,6 +77,7 @@ class SpeechRecognitionServiceHandler : public IPAServiceIf {
 		// be trained once
 		SpeechRecognitionServiceHandler() {
 			this->SERVICE_NAME = "asr";
+			this->SERVICE_INPUT_TYPE = "audio";
 			this->SCHEDULER_IP = "141.212.107.226";
 			this->SCHEDULER_PORT = 8888;
 			this->SERVICE_IP = "clarity28.eecs.umich.edu";
@@ -89,12 +90,18 @@ class SpeechRecognitionServiceHandler : public IPAServiceIf {
 			time_t rawtime;
                         time(&rawtime);
                         cout << "receiving speech recognition query at " << ctime(&rawtime);
-
-                        map<string, QueryInput>::const_iterator iter = query.inputset.find(SERVICE_INPUT_TYPE);
+			// parse the query input
+			int i;
+			for(i = 0; i < query.inputset.size(); i++) {
+				if(query.inputset[i].type == this->SERVICE_INPUT_TYPE)
+					break;
+			}
+			QueryInput queryInput = query.inputset.at(i);
+			string audioInput = queryInput.input.at(0);
                         struct timeval now;
                         gettimeofday(&now, NULL);
                         int64_t start_time = (now.tv_sec*1E6+now.tv_usec) / 1000;
-                        _return = execute_asr(iter->second.input);
+                        _return = execute_asr(audioInput);
 
                         gettimeofday(&now, 0);
                         int64_t end_time = (now.tv_sec*1E6+now.tv_usec) / 1000;
@@ -106,7 +113,7 @@ class SpeechRecognitionServiceHandler : public IPAServiceIf {
                         hostport.port = this->SERVICE_PORT;
                         latencyStat.hostport = hostport;
                         latencyStat.latency = end_time - start_time;
-                        this->scheduler_client->updateLatencyStat(SERVICE_TYPE, latencyStat);
+                        this->scheduler_client->updateLatencyStat(this->SERVICE_NAME, latencyStat);
                         cout << "update the command center latency statistics (" << latencyStat.latency << "ms)" << endl;
   		}
 		
@@ -127,6 +134,7 @@ class SpeechRecognitionServiceHandler : public IPAServiceIf {
 	private:
 		QuerySpec newSpec;
 		string SERVICE_NAME;
+		string SERVICE_INPUT_TYPE;
 		string SCHEDULER_IP;
 		int SCHEDULER_PORT;
 		string SERVICE_IP;

@@ -133,12 +133,16 @@ void QueryInput::__set_tags(const std::vector<std::string> & val) {
 __isset.tags = true;
 }
 
-void QueryInput::__set_input(const std::string& val) {
+void QueryInput::__set_input(const std::vector<std::string> & val) {
   this->input = val;
 }
 
-const char* QueryInput::ascii_fingerprint = "EB6429E0D87CE2932B4C2857070CB2FA";
-const uint8_t QueryInput::binary_fingerprint[16] = {0xEB,0x64,0x29,0xE0,0xD8,0x7C,0xE2,0x93,0x2B,0x4C,0x28,0x57,0x07,0x0C,0xB2,0xFA};
+void QueryInput::__set_type(const std::string& val) {
+  this->type = val;
+}
+
+const char* QueryInput::ascii_fingerprint = "7DB8B3BD937696C6F449520C758267AA";
+const uint8_t QueryInput::binary_fingerprint[16] = {0x7D,0xB8,0xB3,0xBD,0x93,0x76,0x96,0xC6,0xF4,0x49,0x52,0x0C,0x75,0x82,0x67,0xAA};
 
 uint32_t QueryInput::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -181,9 +185,29 @@ uint32_t QueryInput::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readBinary(this->input);
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->input.clear();
+            uint32_t _size7;
+            ::apache::thrift::protocol::TType _etype10;
+            xfer += iprot->readListBegin(_etype10, _size7);
+            this->input.resize(_size7);
+            uint32_t _i11;
+            for (_i11 = 0; _i11 < _size7; ++_i11)
+            {
+              xfer += iprot->readBinary(this->input[_i11]);
+            }
+            xfer += iprot->readListEnd();
+          }
           this->__isset.input = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->type);
+          this->__isset.type = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -209,17 +233,29 @@ uint32_t QueryInput::write(::apache::thrift::protocol::TProtocol* oprot) const {
     xfer += oprot->writeFieldBegin("tags", ::apache::thrift::protocol::T_LIST, 1);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->tags.size()));
-      std::vector<std::string> ::const_iterator _iter7;
-      for (_iter7 = this->tags.begin(); _iter7 != this->tags.end(); ++_iter7)
+      std::vector<std::string> ::const_iterator _iter12;
+      for (_iter12 = this->tags.begin(); _iter12 != this->tags.end(); ++_iter12)
       {
-        xfer += oprot->writeString((*_iter7));
+        xfer += oprot->writeString((*_iter12));
       }
       xfer += oprot->writeListEnd();
     }
     xfer += oprot->writeFieldEnd();
   }
-  xfer += oprot->writeFieldBegin("input", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeBinary(this->input);
+  xfer += oprot->writeFieldBegin("input", ::apache::thrift::protocol::T_LIST, 2);
+  {
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, static_cast<uint32_t>(this->input.size()));
+    std::vector<std::string> ::const_iterator _iter13;
+    for (_iter13 = this->input.begin(); _iter13 != this->input.end(); ++_iter13)
+    {
+      xfer += oprot->writeBinary((*_iter13));
+    }
+    xfer += oprot->writeListEnd();
+  }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("type", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->type);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -232,18 +268,21 @@ void swap(QueryInput &a, QueryInput &b) {
   using ::std::swap;
   swap(a.tags, b.tags);
   swap(a.input, b.input);
+  swap(a.type, b.type);
   swap(a.__isset, b.__isset);
 }
 
-QueryInput::QueryInput(const QueryInput& other8) {
-  tags = other8.tags;
-  input = other8.input;
-  __isset = other8.__isset;
+QueryInput::QueryInput(const QueryInput& other14) {
+  tags = other14.tags;
+  input = other14.input;
+  type = other14.type;
+  __isset = other14.__isset;
 }
-QueryInput& QueryInput::operator=(const QueryInput& other9) {
-  tags = other9.tags;
-  input = other9.input;
-  __isset = other9.__isset;
+QueryInput& QueryInput::operator=(const QueryInput& other15) {
+  tags = other15.tags;
+  input = other15.input;
+  type = other15.type;
+  __isset = other15.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const QueryInput& obj) {
@@ -251,6 +290,7 @@ std::ostream& operator<<(std::ostream& out, const QueryInput& obj) {
   out << "QueryInput(";
   out << "tags="; (obj.__isset.tags ? (out << to_string(obj.tags)) : (out << "<null>"));
   out << ", " << "input=" << to_string(obj.input);
+  out << ", " << "type=" << to_string(obj.type);
   out << ")";
   return out;
 }
@@ -265,12 +305,12 @@ void QuerySpec::__set_name(const std::string& val) {
 __isset.name = true;
 }
 
-void QuerySpec::__set_inputset(const std::map<std::string, QueryInput> & val) {
+void QuerySpec::__set_inputset(const std::vector<QueryInput> & val) {
   this->inputset = val;
 }
 
-const char* QuerySpec::ascii_fingerprint = "0834F3A0696DB09FE503E5C1A4A62101";
-const uint8_t QuerySpec::binary_fingerprint[16] = {0x08,0x34,0xF3,0xA0,0x69,0x6D,0xB0,0x9F,0xE5,0x03,0xE5,0xC1,0xA4,0xA6,0x21,0x01};
+const char* QuerySpec::ascii_fingerprint = "4B668F562C1E4C7FAC24FC6C66C474C4";
+const uint8_t QuerySpec::binary_fingerprint[16] = {0x4B,0x66,0x8F,0x56,0x2C,0x1E,0x4C,0x7F,0xAC,0x24,0xFC,0x6C,0x66,0xC4,0x74,0xC4};
 
 uint32_t QuerySpec::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -301,22 +341,19 @@ uint32_t QuerySpec::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
-        if (ftype == ::apache::thrift::protocol::T_MAP) {
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->inputset.clear();
-            uint32_t _size10;
-            ::apache::thrift::protocol::TType _ktype11;
-            ::apache::thrift::protocol::TType _vtype12;
-            xfer += iprot->readMapBegin(_ktype11, _vtype12, _size10);
-            uint32_t _i14;
-            for (_i14 = 0; _i14 < _size10; ++_i14)
+            uint32_t _size16;
+            ::apache::thrift::protocol::TType _etype19;
+            xfer += iprot->readListBegin(_etype19, _size16);
+            this->inputset.resize(_size16);
+            uint32_t _i20;
+            for (_i20 = 0; _i20 < _size16; ++_i20)
             {
-              std::string _key15;
-              xfer += iprot->readString(_key15);
-              QueryInput& _val16 = this->inputset[_key15];
-              xfer += _val16.read(iprot);
+              xfer += this->inputset[_i20].read(iprot);
             }
-            xfer += iprot->readMapEnd();
+            xfer += iprot->readListEnd();
           }
           this->__isset.inputset = true;
         } else {
@@ -345,16 +382,15 @@ uint32_t QuerySpec::write(::apache::thrift::protocol::TProtocol* oprot) const {
     xfer += oprot->writeString(this->name);
     xfer += oprot->writeFieldEnd();
   }
-  xfer += oprot->writeFieldBegin("inputset", ::apache::thrift::protocol::T_MAP, 2);
+  xfer += oprot->writeFieldBegin("inputset", ::apache::thrift::protocol::T_LIST, 2);
   {
-    xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_STRING, ::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->inputset.size()));
-    std::map<std::string, QueryInput> ::const_iterator _iter17;
-    for (_iter17 = this->inputset.begin(); _iter17 != this->inputset.end(); ++_iter17)
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->inputset.size()));
+    std::vector<QueryInput> ::const_iterator _iter21;
+    for (_iter21 = this->inputset.begin(); _iter21 != this->inputset.end(); ++_iter21)
     {
-      xfer += oprot->writeString(_iter17->first);
-      xfer += _iter17->second.write(oprot);
+      xfer += (*_iter21).write(oprot);
     }
-    xfer += oprot->writeMapEnd();
+    xfer += oprot->writeListEnd();
   }
   xfer += oprot->writeFieldEnd();
 
@@ -371,15 +407,15 @@ void swap(QuerySpec &a, QuerySpec &b) {
   swap(a.__isset, b.__isset);
 }
 
-QuerySpec::QuerySpec(const QuerySpec& other18) {
-  name = other18.name;
-  inputset = other18.inputset;
-  __isset = other18.__isset;
+QuerySpec::QuerySpec(const QuerySpec& other22) {
+  name = other22.name;
+  inputset = other22.inputset;
+  __isset = other22.__isset;
 }
-QuerySpec& QuerySpec::operator=(const QuerySpec& other19) {
-  name = other19.name;
-  inputset = other19.inputset;
-  __isset = other19.__isset;
+QuerySpec& QuerySpec::operator=(const QuerySpec& other23) {
+  name = other23.name;
+  inputset = other23.inputset;
+  __isset = other23.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const QuerySpec& obj) {
@@ -481,15 +517,15 @@ void swap(RegMessage &a, RegMessage &b) {
   swap(a.__isset, b.__isset);
 }
 
-RegMessage::RegMessage(const RegMessage& other20) {
-  app_name = other20.app_name;
-  endpoint = other20.endpoint;
-  __isset = other20.__isset;
+RegMessage::RegMessage(const RegMessage& other24) {
+  app_name = other24.app_name;
+  endpoint = other24.endpoint;
+  __isset = other24.__isset;
 }
-RegMessage& RegMessage::operator=(const RegMessage& other21) {
-  app_name = other21.app_name;
-  endpoint = other21.endpoint;
-  __isset = other21.__isset;
+RegMessage& RegMessage::operator=(const RegMessage& other25) {
+  app_name = other25.app_name;
+  endpoint = other25.endpoint;
+  __isset = other25.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const RegMessage& obj) {
@@ -591,15 +627,15 @@ void swap(LatencyStat &a, LatencyStat &b) {
   swap(a.__isset, b.__isset);
 }
 
-LatencyStat::LatencyStat(const LatencyStat& other22) {
-  hostport = other22.hostport;
-  latency = other22.latency;
-  __isset = other22.__isset;
+LatencyStat::LatencyStat(const LatencyStat& other26) {
+  hostport = other26.hostport;
+  latency = other26.latency;
+  __isset = other26.__isset;
 }
-LatencyStat& LatencyStat::operator=(const LatencyStat& other23) {
-  hostport = other23.hostport;
-  latency = other23.latency;
-  __isset = other23.__isset;
+LatencyStat& LatencyStat::operator=(const LatencyStat& other27) {
+  hostport = other27.hostport;
+  latency = other27.latency;
+  __isset = other27.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const LatencyStat& obj) {

@@ -7,12 +7,14 @@ struct THostPort {
 
 struct QueryInput {
 	1: optional list<string> tags;
-	2: binary input;
+	2: list<binary> input;
+	3: string type;	//type of data (e.g. audio, image, etc)
 }
 
 struct QuerySpec {
 	1: optional string name;
-	2: map<string, QueryInput> inputset;
+	// 2: map<string, QueryInput> inputset;
+	2: list<QueryInput> inputset;
 }
 
 struct RegMessage {

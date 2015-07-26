@@ -79,31 +79,35 @@ class THostPort {
 void swap(THostPort &a, THostPort &b);
 
 typedef struct _QueryInput__isset {
-  _QueryInput__isset() : tags(false), input(false) {}
+  _QueryInput__isset() : tags(false), input(false), type(false) {}
   bool tags :1;
   bool input :1;
+  bool type :1;
 } _QueryInput__isset;
 
 class QueryInput {
  public:
 
-  static const char* ascii_fingerprint; // = "EB6429E0D87CE2932B4C2857070CB2FA";
-  static const uint8_t binary_fingerprint[16]; // = {0xEB,0x64,0x29,0xE0,0xD8,0x7C,0xE2,0x93,0x2B,0x4C,0x28,0x57,0x07,0x0C,0xB2,0xFA};
+  static const char* ascii_fingerprint; // = "7DB8B3BD937696C6F449520C758267AA";
+  static const uint8_t binary_fingerprint[16]; // = {0x7D,0xB8,0xB3,0xBD,0x93,0x76,0x96,0xC6,0xF4,0x49,0x52,0x0C,0x75,0x82,0x67,0xAA};
 
   QueryInput(const QueryInput&);
   QueryInput& operator=(const QueryInput&);
-  QueryInput() : input() {
+  QueryInput() : type() {
   }
 
   virtual ~QueryInput() throw();
   std::vector<std::string>  tags;
-  std::string input;
+  std::vector<std::string>  input;
+  std::string type;
 
   _QueryInput__isset __isset;
 
   void __set_tags(const std::vector<std::string> & val);
 
-  void __set_input(const std::string& val);
+  void __set_input(const std::vector<std::string> & val);
+
+  void __set_type(const std::string& val);
 
   bool operator == (const QueryInput & rhs) const
   {
@@ -112,6 +116,8 @@ class QueryInput {
     else if (__isset.tags && !(tags == rhs.tags))
       return false;
     if (!(input == rhs.input))
+      return false;
+    if (!(type == rhs.type))
       return false;
     return true;
   }
@@ -138,8 +144,8 @@ typedef struct _QuerySpec__isset {
 class QuerySpec {
  public:
 
-  static const char* ascii_fingerprint; // = "0834F3A0696DB09FE503E5C1A4A62101";
-  static const uint8_t binary_fingerprint[16]; // = {0x08,0x34,0xF3,0xA0,0x69,0x6D,0xB0,0x9F,0xE5,0x03,0xE5,0xC1,0xA4,0xA6,0x21,0x01};
+  static const char* ascii_fingerprint; // = "4B668F562C1E4C7FAC24FC6C66C474C4";
+  static const uint8_t binary_fingerprint[16]; // = {0x4B,0x66,0x8F,0x56,0x2C,0x1E,0x4C,0x7F,0xAC,0x24,0xFC,0x6C,0x66,0xC4,0x74,0xC4};
 
   QuerySpec(const QuerySpec&);
   QuerySpec& operator=(const QuerySpec&);
@@ -148,13 +154,13 @@ class QuerySpec {
 
   virtual ~QuerySpec() throw();
   std::string name;
-  std::map<std::string, QueryInput>  inputset;
+  std::vector<QueryInput>  inputset;
 
   _QuerySpec__isset __isset;
 
   void __set_name(const std::string& val);
 
-  void __set_inputset(const std::map<std::string, QueryInput> & val);
+  void __set_inputset(const std::vector<QueryInput> & val);
 
   bool operator == (const QuerySpec & rhs) const
   {
