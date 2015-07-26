@@ -18,6 +18,9 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 /**
  * CommandCenter maintains the real time membership of the ClarEco service system, and perform certain policies(e.g. load balancing) when assigning a service to a client.
  * TODO add the heartbeat mechanism to keep the real time information about services.
@@ -25,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class CommandCenter implements SchedulerService.Iface {
 
-    private static final String CONFIG_PATH = "conf.properties";
+    private static final String CONFIG_PATH = System.getProperty("user.dir") + File.separator + "conf" + File.separator + "conf.properties";
     private static Properties properties;
     private static final Logger LOG = Logger.getLogger(CommandCenter.class);
     private String SCHEDULER_IP;
@@ -97,7 +100,7 @@ public class CommandCenter implements SchedulerService.Iface {
     }
 
     public static void main(String[] args) throws IOException {
-        InputStream conf = CommandCenter.class.getClassLoader().getResourceAsStream(CONFIG_PATH);
+        InputStream conf = new FileInputStream(CONFIG_PATH);
         properties = new Properties();
         properties.load(conf);
         String ccIp = properties.getProperty(Configurations.COMMAND_CENTER_IP);
