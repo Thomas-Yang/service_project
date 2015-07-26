@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
+import java.nio.ByteBuffer;
 
 /**
  * The client for testing the ASR service.
@@ -39,9 +42,12 @@ public class ASRClient {
             query.setName("test-query");
             File audioFile = new File(AUDIO_PATH);
             QueryInput queryInput = new QueryInput();
-            queryInput.setInput(Files.readAllBytes(audioFile.toPath()));
-            Map<String, QueryInput> inputSet = new HashMap<String, QueryInput>();
-            inputSet.put(ServiceTypes.SERVICE_INPUT_AUDIO, queryInput);
+	    List<ByteBuffer> input = new LinkedList<ByteBuffer>();
+	    input.add(ByteBuffer.wrap(Files.readAllBytes(audioFile.toPath())));
+            queryInput.setInput(input);
+	    queryInput.setType(ServiceTypes.SERVICE_INPUT_AUDIO);
+            List<QueryInput> inputSet = new LinkedList<QueryInput>();
+            inputSet.add(queryInput);
             query.setInputset(inputSet);
             System.out.println(new String(asrClient.submitQuery(query).array()));
         } catch (IOException | TException e) {
